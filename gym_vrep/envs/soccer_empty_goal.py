@@ -1,6 +1,6 @@
 import logging
 import math
-from gym_soccer.envs.soccer_env import SoccerEnv
+from gym_vrep.envs.soccer_env import SoccerEnv
 
 try:
     import hfo_py

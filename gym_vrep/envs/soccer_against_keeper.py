@@ -1,5 +1,5 @@
 import logging
-from gym_soccer.envs.soccer_empty_goal import SoccerEmptyGoalEnv
+from gym_vrep.envs.soccer_empty_goal import SoccerEmptyGoalEnv
 
 logger = logging.getLogger(__name__)
 
