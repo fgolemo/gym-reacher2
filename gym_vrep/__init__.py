@@ -7,7 +7,7 @@ register(
     id='ErgoBall-v0',
     entry_point='gym_vrep.envs:ErgoBallEnv',
     timestep_limit=1000,
-    reward_threshold=1.0,
+    reward_threshold=10.0,
     nondeterministic = True,
 )
 

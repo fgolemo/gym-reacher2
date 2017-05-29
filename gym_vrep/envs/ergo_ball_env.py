@@ -31,10 +31,11 @@ BALL_POS = [.035, .035, .035,  # size
 
 REWARD_SCALING = 10
 
+
 class ErgoBallEnv(gym.Env):
     ball_baseline = 0
 
-    def __init__(self, headless=False):
+    def __init__(self, headless=True):
         self._startEnv(headless)
 
         boxes = (spaces.Box(low=JOINT_LIMITS[i][0], high=JOINT_LIMITS[i][1], shape=1) for i in range(6))
@@ -48,7 +49,8 @@ class ErgoBallEnv(gym.Env):
     def _startEnv(self, headless):
         self.venv = vrepper(headless=headless)
         self.venv.start()
-        self.venv.load_scene(os.getcwd() + '/../scenes/poppy_ergo_jr_vanilla_ball.ttt')
+        current_dir = os.path.dirname(os.path.realpath(__file__))
+        self.venv.load_scene(current_dir + '/../scenes/poppy_ergo_jr_vanilla_ball.ttt')
         motors = []
         for i in range(6):
             motor = self.venv.get_object_by_name('m{}'.format(i + 1), is_joint=True)
@@ -94,7 +96,6 @@ class ErgoBallEnv(gym.Env):
 
         self.observation = np.array(pos).astype('float32')
 
-
     def _gotoPos(self, pos):
         for i, m in enumerate(self.motors):
             m.set_position_target(pos[i])
@@ -121,6 +122,9 @@ class ErgoBallEnv(gym.Env):
         self.venv.stop_simulation()
         self.venv.end()
 
+    def _render(self, mode='human', close=False):
+        pass
+
 
 def randomAction(obs, step=1):
     tmp = obs + np.random.uniform(-step, step, 6)
@@ -142,3 +146,4 @@ if __name__ == '__main__':
 
     print('simulation ended. leaving in 5 seconds...')
     time.sleep(2)
+
