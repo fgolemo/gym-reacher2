@@ -26,12 +26,12 @@ class ErgoBallEnv(gym.Env, utils.EzPickle):
         self.observation_space = spaces.Box(low=-1, high=1,
                                             shape=(self.env.getStateSize()))
         # Action space omits the Tackle/Catch actions, which are useful on defense
-        self.action_space = spaces.Tuple((spaces.Discrete(3),
-                                          spaces.Box(low=0, high=100, shape=1),
-                                          spaces.Box(low=-180, high=180, shape=1),
-                                          spaces.Box(low=-180, high=180, shape=1),
-                                          spaces.Box(low=0, high=100, shape=1),
-                                          spaces.Box(low=-180, high=180, shape=1)))
+        self.action_space = spaces.Tuple((spaces.Box(low=-150, high=150, shape=1),
+                                          spaces.Box(low=-90, high=125, shape=1),
+                                          spaces.Box(low=-90, high=90, shape=1),
+                                          spaces.Box(low=-90, high=90, shape=1),
+                                          spaces.Box(low=-90, high=90, shape=1),
+                                          spaces.Box(low=-90, high=90, shape=1)))
         self.status = hfo_py.IN_GAME
 
     def __del__(self):
