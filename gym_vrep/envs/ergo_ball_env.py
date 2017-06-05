@@ -34,10 +34,9 @@ REWARD_SCALING = 10
 
 class ErgoBallEnv(gym.Env):
     ball_baseline = 0
+    vrep_running = False
 
-    def __init__(self, headless=True):
-        self._startEnv(headless)
-
+    def __init__(self):
         boxes = (spaces.Box(low=JOINT_LIMITS[i][0], high=JOINT_LIMITS[i][1], shape=1) for i in range(6))
 
         self.observation_space = spaces.Tuple(boxes)
@@ -45,6 +44,10 @@ class ErgoBallEnv(gym.Env):
 
         self.minima = [JOINT_LIMITS[i][0] for i in range(6)]
         self.maxima = [JOINT_LIMITS[i][1] for i in range(6)]
+
+    def _actualInit(self, headless=True):
+        self._startEnv(headless)
+        self.vrep_running = True
 
     def _startEnv(self, headless):
         self.venv = vrepper(headless=headless)
@@ -73,20 +76,27 @@ class ErgoBallEnv(gym.Env):
         self.venv.make_simulation_synchronous(True)
 
     def _reset(self):
+        if not self.vrep_running:
+            self._actualInit()
+
         self._restPos()
 
         self.ballMaxPos = 0
-        self.ball_baseline = self._getReward()
+        self.ball_baseline = self._getMaxBall()
 
         self._self_observe()
         return self.observation
 
-    def _getReward(self):
+    def _getMaxBall(self):
         ballPos = self.ball.get_position()
 
         if ballPos[2] > self.ballMaxPos:
             self.ballMaxPos = ballPos[2]
 
+        return self.ballMaxPos
+
+    def _getReward(self):
+        self._getMaxBall()
         return (self.ballMaxPos - self.ball_baseline) * REWARD_SCALING
 
     def _self_observe(self):
@@ -133,7 +143,8 @@ def randomAction(obs, step=1):
 
 
 if __name__ == '__main__':
-    env = ErgoBallEnv(headless=True)
+    env = ErgoBallEnv()
+    env._actualInit(headless=False)
 
     for k in range(3):
         observation = env.reset()
