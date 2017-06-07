@@ -19,3 +19,11 @@ register(
     nondeterministic = True,
 )
 
+register(
+    id='ErgoBallDyn-v1',
+    entry_point='gym_vrep.envs:ErgoBallDynRewEnv',
+    timestep_limit=100,
+    reward_threshold=10.0,
+    nondeterministic = True,
+)
+
