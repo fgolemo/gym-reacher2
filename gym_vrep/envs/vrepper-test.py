@@ -62,6 +62,8 @@ for i in range(2):
         venv.step_blocking_simulation()
         print ball.get_position()
     gotoPos(throwEnd) # end pos
+    forces = motors[0].get_joint_force()
+    print forces
     for _ in range(30):
         venv.step_blocking_simulation()
         print ball.get_position()
