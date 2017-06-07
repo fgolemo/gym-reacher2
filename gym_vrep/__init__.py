@@ -8,7 +8,7 @@ register(
     entry_point='gym_vrep.envs:ErgoBallEnv',
     timestep_limit=100,
     reward_threshold=10.0,
-    nondeterministic = True,
+    nondeterministic = False,
 )
 
 register(
