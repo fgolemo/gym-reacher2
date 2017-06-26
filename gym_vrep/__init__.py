@@ -27,3 +27,27 @@ register(
     nondeterministic = True,
 )
 
+register(
+    id='ErgoBallThrow-v0',
+    entry_point='gym_vrep.envs:ErgoBallThrowEnv',
+    timestep_limit=100,
+    reward_threshold=10.0,
+    nondeterministic = True,
+)
+
+register(
+    id='ErgoBallThrowVert-v0',
+    entry_point='gym_vrep.envs:ErgoBallThrowVertEnv',
+    timestep_limit=100,
+    reward_threshold=10.0,
+    nondeterministic = True,
+)
+
+register(
+    id='ErgoBallThrowVert-v1',
+    entry_point='gym_vrep.envs:ErgoBallThrowVertMaxEnv',
+    timestep_limit=100,
+    reward_threshold=10.0,
+    nondeterministic = True,
+)
+
