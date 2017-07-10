@@ -30,3 +30,8 @@ For the reward there are two types: maximum and current - "current" is directly 
   - *Reward type:* Mixed
   - *Reward metric:* Maximum(z-distance between EE and ball) minus current(x/y-distance between EE and ball) 
   
+All of the above use the same fixed starting position. If you want to use random starting positions, use these:
+  
+  
+- **ErgoBallThrowRand-v0** - same as `ErgoBallThrow-v0` but with random starting position 
+- **ErgoBallThrowVertRand-v0** - same `ErgoBallThrowVert-v0` but with random starting position 
