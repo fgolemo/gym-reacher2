@@ -4,7 +4,6 @@ import time
 import gym
 import numpy as np
 from gym import error, spaces
-import math
 
 try:
     from vrepper.vrepper import vrepper
@@ -38,7 +37,7 @@ BALL_POS = [.035, .035, .035,  # size
 REWARD_SCALING = 10
 
 
-class ErgoBallThrowVertEnv(gym.Env):
+class ErgoBallThrowRandEnv(gym.Env):
     vrep_running = False
 
     def __init__(self):
@@ -71,13 +70,24 @@ class ErgoBallThrowVertEnv(gym.Env):
         self.venv.stop_simulation()
         self.venv.start_simulation(is_sync=False)
 
+        m0 = np.random.randint(-90, 90)
+        m1 = np.random.randint(-90, 90)
+        m2 = np.random.randint(-90-(min(m1, 0)), 90-(max(m1, 0)))
+        m4 = (m1+m2) * -1.0
+
+        targets = [m0, m1, m2, 0, m4, -90]
+
         for i, m in enumerate(self.motors):
-            m.set_position_target(REST_POS[i])
+            m.set_position_target(targets[i])
 
-        params = self.venv.create_params([], BALL_POS, [], '')
+        pos = self.motors[5].get_position()
 
+        ball_pos_relative = BALL_POS[:3]+pos[:2]+BALL_POS[5:]
+
+        params = self.venv.create_params([], ball_pos_relative, [], '')
         self.venv.call_script_function('spawnBall', params)
-        time.sleep(.5)
+
+        time.sleep(.2)
         self.ball = self.venv.get_object_by_name("ball")
 
         self.venv.make_simulation_synchronous(True)
@@ -92,19 +102,16 @@ class ErgoBallThrowVertEnv(gym.Env):
 
     def _getCurrentBall(self):
         ballPos = self.ball.get_position()
-        return ballPos
+        return ballPos[2]
 
     def _getTip(self):
         tip = self.motors[-1].get_position()
-        return tip
+        return tip[2]
 
     def _getReward(self):
         tip = self._getTip()
         ball = self._getCurrentBall()
-        z = ball[2] - tip[2] # try to maximize height
-        xy = math.sqrt( (ball[0] - tip[0])**2 + (ball[1] - tip[1])**2 ) # try to minimize x-y distance
-
-        return (z - xy) * REWARD_SCALING
+        return (ball - tip) * REWARD_SCALING
 
     def _self_observe(self):
         pos = []
@@ -152,7 +159,7 @@ def randomAction(obs, step=1):
 
 
 if __name__ == '__main__':
-    env = ErgoBallThrowVertEnv()
+    env = ErgoBallThrowRandEnv()
     env._actualInit(headless=False)
 
     for k in range(3):

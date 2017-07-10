@@ -36,6 +36,14 @@ register(
 )
 
 register(
+    id='ErgoBallThrowRandom-v0',
+    entry_point='gym_vrep.envs:ErgoBallThrowRandEnv',
+    timestep_limit=100,
+    reward_threshold=10.0,
+    nondeterministic = True,
+)
+
+register(
     id='ErgoBallThrowVert-v0',
     entry_point='gym_vrep.envs:ErgoBallThrowVertEnv',
     timestep_limit=100,
