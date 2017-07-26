@@ -12,9 +12,10 @@ class MujocoPixelWrapper(gym.ObservationWrapper):
         return self.env.unwrapped._get_viewer()
 
     def _observation(self, observation):
+        super_obs = self.env.env._get_obs()
         self.get_viewer().render()
         data, width, height = self.get_viewer().get_image()
-        return np.fromstring(data, dtype='uint8').reshape(height, width, 3)[::-1,:,:]
+        return [super_obs, np.fromstring(data, dtype='uint8').reshape(height, width, 3)[::-1,:,:]]
 
 
 def Reacher2PixelEnv(base_env_id):
@@ -31,7 +32,8 @@ if __name__ == '__main__':
         torque1=100  # torque of joint 2
     )
     obs = env.reset()
-    print (obs.shape)
+    print (len(obs))
+    print (obs[0].shape, obs[1].shape)
 
     for i in range(100):
         env.render()
