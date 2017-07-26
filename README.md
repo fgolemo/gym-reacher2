@@ -2,7 +2,7 @@
 
 This repo contains the gym environment `Reacher2-v1`.
 
-Modification of the original Reacher-v1 environment to allow for dynamic limb length and joint torque.
+Modification of the original `Reacher-v1` environment to allow for dynamic limb length and joint torque.
 
 #### Installation:
 
