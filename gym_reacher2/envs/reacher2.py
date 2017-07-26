@@ -1,11 +1,5 @@
-import datetime
-import os
-import tempfile
-import xml.etree.cElementTree as ET
-
 import numpy as np
-from gym import utils, error
-from gym.envs.mujoco import ReacherEnv
+from gym import utils, error, spaces
 
 from gym_reacher2.envs import MujocoReacher2Env
 
@@ -22,7 +16,7 @@ except ImportError as e:
             e))
 
 
-class Reacher2Env(ReacherEnv):
+class Reacher2Env(MujocoReacher2Env, utils.EzPickle):
     isInitialized = False
 
     def _init(self, arm0=.1, arm1=.1, torque0=200, torque1=200):
@@ -37,13 +31,26 @@ class Reacher2Env(ReacherEnv):
         MujocoReacher2Env.__init__(self, 'reacher.xml', 2, params)
 
     def __init__(self):
-        pass
-        # super().__init__() that's what we don't wanna do
+        self.metadata = {
+            'render.modes': ['human', 'rgb_array'],
+            'video.frames_per_second': 50
+        }
+        self.obs_dim = 11
+
+        self.action_space = spaces.Box(
+            np.array([-1., -1.]),
+            np.array([1., 1.])
+        )
+
+        high = np.inf * np.ones(self.obs_dim)
+        low = -high
+        self.observation_space = spaces.Box(low, high)
+
+        self._seed()
 
     def _step(self, a):
         if not self.isInitialized:
             raise Exception(NOT_INITIALIZED_ERR)
-
         vec = self.get_body_com("fingertip") - self.get_body_com("target")
         reward_dist = - np.linalg.norm(vec)
         reward_ctrl = - np.square(a).sum()
@@ -53,66 +60,30 @@ class Reacher2Env(ReacherEnv):
         done = False
         return ob, reward, done, dict(reward_dist=reward_dist, reward_ctrl=reward_ctrl)
 
-    def _reset(self):
-        if not self.isInitialized:
-            raise Exception(NOT_INITIALIZED_ERR)
+    def viewer_setup(self):
+        self.viewer.cam.trackbodyid = 0
 
-        mjlib.mj_resetData(self.model.ptr, self.data.ptr)
-        ob = self.reset_model()
-        if self.viewer is not None:
-            self.viewer.autoscale()
-            self.viewer_setup()
-        return ob
+    def reset_model(self):
+        qpos = self.np_random.uniform(low=-0.1, high=0.1, size=self.model.nq) + self.init_qpos
+        while True:
+            self.goal = self.np_random.uniform(low=-.2, high=.2, size=2)
+            if np.linalg.norm(self.goal) < 2:
+                break
+        qpos[-2:] = self.goal
+        qvel = self.init_qvel + self.np_random.uniform(low=-.005, high=.005, size=self.model.nv)
+        qvel[-2:] = 0
+        self.set_state(qpos, qvel)
+        return self._get_obs()
 
-    def _render(self, mode='human', close=False):
-        if not self.isInitialized:
-            raise Exception(NOT_INITIALIZED_ERR)
-
-        if close:
-            if self.viewer is not None:
-                self._get_viewer().finish()
-                self.viewer = None
-            return
-
-        if mode == 'rgb_array':
-            self._get_viewer().render()
-            data, width, height = self._get_viewer().get_image()
-            return np.fromstring(data, dtype='uint8').reshape(height, width, 3)[::-1, :, :]
-        elif mode == 'human':
-            self._get_viewer().loop_once()
-
-    def _modifyXml(self, xml_file, model_parameters):
-
-        tree = ET.ElementTree(file=xml_file)
-        root = tree.getroot()
-
-        for i in range(2):
-            bodies = "/".join(["body"] * (i+1))
-
-            arm_value = model_parameters["arm{}".format(i)]
-
-            arm = root.find('worldbody/{}/geom'.format(bodies))
-            arm.set('fromto', '0 0 0 {} 0 0'.format(arm_value))
-
-            body = root.find('worldbody/{}/body'.format(bodies))
-            body.set('pos', '{} 0 0'.format(arm_value))
-
-
-        for i in range(2):
-            joint = root.find('actuator/motor[@joint="joint{}"]'.format(i))
-            joint.set('gear', str(float(model_parameters["torque{}".format(i)])))
-
-
-        file_name = os.path.basename(xml_file)
-        tmp_dir = tempfile.gettempdir()
-        now = datetime.datetime.now().strftime("%Y%m%d%H%M%S%f")
-        file_name_with_date = "{}-{}".format(now, file_name)
-
-        new_file_path = os.path.join(tmp_dir, file_name_with_date)
-
-        tree.write(new_file_path, "UTF-8")
-
-        return new_file_path
+    def _get_obs(self):
+        theta = self.model.data.qpos.flat[:2]
+        return np.concatenate([
+            np.cos(theta),
+            np.sin(theta),
+            self.model.data.qpos.flat[2:],
+            self.model.data.qvel.flat[:2],
+            self.get_body_com("fingertip") - self.get_body_com("target")
+        ])
 
 
 if __name__ == '__main__':
