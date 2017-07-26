@@ -2,7 +2,7 @@
 
 This repo contains the gym environment `Reacher2-v1`.
 
-Modification of the original Reacher-v1 environment to allow for dynamic limb length and joint torque.
+Modification of the original `Reacher-v1` environment to allow for dynamic limb length and joint torque.
 
 #### Installation:
 
@@ -21,7 +21,7 @@ in Python 3 (!):
     import gym_reacher2   
     env = gym.make("Reacher2-v1")
     env.env._init(
-        arm0 = .05,     # length of limb 1
+        arm0 = .05,    # length of limb 1
         arm1 = .2,     # length of limb 2
         torque0 = 100, # torque of joint 1
         torque1 = 400  # torque of joint 2
