@@ -25,6 +25,13 @@ in Python 3 (!):
         arm1 = .2,     # length of limb 2
         torque0 = 100, # torque of joint 1
         torque1 = 400  # torque of joint 2
+        fov=70,        # field of view
+        colors={
+                "arenaBackground": ".9 .0 .5",
+                "arenaBorders": "0.1 0.1 0.4",
+                "arm0": "0.8 0.7 0.1",
+                "arm1": "0.2 0.5 0.1"
+            }
     )
     env.reset()   
     for i in range(100):
@@ -41,6 +48,14 @@ The vanilla Reacher-v1 environment has the following parameters:
     arm0 = .1,
     arm1 = .1,
     torque0 = 200,
-    torque1 = 200
+    torque1 = 200,
+    fov = 45,
+    colors = {
+        "arenaBackground": "0.9 0.9 0.9"
+        "arenaBorders": "0.9 0.4 0.6",
+        "arm0": "0.0 0.4 0.6",
+        "arm1": "0.0 0.4 0.6"
+    }
+    
 
 If you don't assign some of these parameters they will default to these values.

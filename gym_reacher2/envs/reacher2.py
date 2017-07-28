@@ -103,7 +103,7 @@ class Reacher2Env(MujocoReacher2Env, utils.EzPickle):
 if __name__ == '__main__':
     import gym_reacher2
     env = gym.make("Reacher2-v1")
-    env._init(
+    env.env._init(
         arm0=.05,  # length of limb 1
         arm1=.2,  # length of limb 2
         torque0=400,  # torque of joint 1
