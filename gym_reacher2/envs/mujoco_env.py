@@ -4,7 +4,7 @@ import tempfile
 import xml.etree.cElementTree as ET
 
 import numpy as np
-from gym import error, spaces
+from gym import error
 from gym.envs.mujoco import MujocoEnv
 
 try:
@@ -22,6 +22,8 @@ class MujocoReacher2Env(MujocoEnv):
         assert "arm1" in model_parameters
         assert "torque0" in model_parameters
         assert "torque1" in model_parameters
+        assert "fov" in model_parameters
+        assert "colors" in model_parameters
 
         if model_path.startswith("/"):
             fullpath = model_path
@@ -54,12 +56,27 @@ class MujocoReacher2Env(MujocoEnv):
             arm = root.find('worldbody/{}/geom'.format(bodies))
             arm.set('fromto', '0 0 0 {} 0 0'.format(arm_value))
 
+            if "arm" + str(i) in model_parameters["colors"]:
+                arm.set('rgba', '{} 1'.format(model_parameters["colors"]["arm" + str(i)]))
+
             body = root.find('worldbody/{}/body'.format(bodies))
             body.set('pos', '{} 0 0'.format(arm_value))
 
         for i in range(2):
             joint = root.find('actuator/motor[@joint="joint{}"]'.format(i))
             joint.set('gear', str(float(model_parameters["torque{}".format(i)])))
+
+        if "arenaBackground" in model_parameters["colors"]:
+            arena = root.find('worldbody/geom[@type="plane"]')
+            arena.set('rgba', '{} 1'.format(model_parameters["colors"]["arenaBackground"]))
+
+        if "arenaBorders" in model_parameters["colors"]:
+            arenaBorders = root.findall('worldbody/geom[@type="capsule"]')
+            for arenaBorder in arenaBorders:
+                arenaBorder.set('rgba', '{} 1'.format(model_parameters["colors"]["arenaBorders"]))
+
+        fovy = root.find('visual/global')
+        fovy.set('fovy', str(model_parameters["fov"]))
 
         file_name = os.path.basename(xml_file)
         tmp_dir = tempfile.gettempdir()

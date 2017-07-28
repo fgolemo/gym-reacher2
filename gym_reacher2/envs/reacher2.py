@@ -1,3 +1,4 @@
+import gym
 import numpy as np
 from gym import utils, error, spaces
 
@@ -19,12 +20,25 @@ except ImportError as e:
 class Reacher2Env(MujocoReacher2Env, utils.EzPickle):
     isInitialized = False
 
-    def _init(self, arm0=.1, arm1=.1, torque0=200, torque1=200):
+    def _init(self, arm0=.1, arm1=.1, torque0=200, torque1=200, fov=45, colors=None):
+        if colors is None:
+            # color values are "R G B", for red, green, and blue respectively
+            # in the range from 0 to 1. For example white it "1 1 1". Red is
+            # "1 0 0".
+
+            colors = {
+                "arenaBackground": ".9 .9 .9",
+                "arenaBorders": "0.9 0.4 0.6",
+                "arm0": "0.0 0.4 0.6",
+                "arm1": "0.0 0.4 0.6"
+            }
         params = {
             "arm0": arm0,
             "arm1": arm1,
             "torque0": torque0,
-            "torque1": torque1
+            "torque1": torque1,
+            "fov": fov,
+            "colors": colors
         }
         self.isInitialized = True
         utils.EzPickle.__init__(self)
@@ -87,7 +101,8 @@ class Reacher2Env(MujocoReacher2Env, utils.EzPickle):
 
 
 if __name__ == '__main__':
-    env = Reacher2Env()
+    import gym_reacher2
+    env = gym.make("Reacher2-v1")
     env._init(
         arm0=.05,  # length of limb 1
         arm1=.2,  # length of limb 2
