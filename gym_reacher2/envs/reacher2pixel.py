@@ -36,8 +36,8 @@ if __name__ == '__main__':
                 "arenaBorders": "0.1 0.1 0.4",
                 "arm0": "0.8 0.7 0.1",
                 "arm1": "0.2 0.5 0.1"
-            }
-
+            },
+        topDown=True
     )
     obs = env.reset()
     print (len(obs))

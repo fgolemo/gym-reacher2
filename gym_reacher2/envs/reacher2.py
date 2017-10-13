@@ -21,7 +21,7 @@ except ImportError as e:
 class Reacher2Env(MujocoReacher2Env, utils.EzPickle):
     isInitialized = False
 
-    def _init(self, arm0=.1, arm1=.1, torque0=200, torque1=200, fov=45, colors=None):
+    def _init(self, arm0=.1, arm1=.1, torque0=200, torque1=200, fov=45, colors=None, topDown=False):
         if colors is None:
             # color values are "R G B", for red, green, and blue respectively
             # in the range from 0 to 1. For example white it "1 1 1". Red is
@@ -41,6 +41,9 @@ class Reacher2Env(MujocoReacher2Env, utils.EzPickle):
             "fov": fov,
             "colors": colors
         }
+        if topDown:
+            self.viewer_setup = self.top_down_cam
+
         self.isInitialized = True
         utils.EzPickle.__init__(self)
         MujocoReacher2Env.__init__(self, 'reacher.xml', 2, params)
@@ -74,6 +77,15 @@ class Reacher2Env(MujocoReacher2Env, utils.EzPickle):
         ob = self._get_obs()
         done = False
         return ob, reward, done, dict(reward_dist=reward_dist, reward_ctrl=reward_ctrl)
+
+    def top_down_cam(self):
+        self.viewer.cam.trackbodyid = 0  # id of the body to track
+        self.viewer.cam.distance = self.model.stat.extent * 0.37  # how much you "zoom in", model.stat.extent is the max limits of the arena
+        self.viewer.cam.lookat[0] = 0  # x,y,z offset from the object
+        self.viewer.cam.lookat[1] = 0
+        self.viewer.cam.lookat[2] = 0
+        self.viewer.cam.elevation = -90  # camera rotation around the axis in the plane going through the frame origin (if 0 you just see a line)
+        self.viewer.cam.azimuth = 0
 
     def viewer_setup(self):
         self.viewer.cam.trackbodyid = 0

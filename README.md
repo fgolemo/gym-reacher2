@@ -31,7 +31,8 @@ in Python 3 (!):
                 "arenaBorders": "0.1 0.1 0.4",
                 "arm0": "0.8 0.7 0.1",
                 "arm1": "0.2 0.5 0.1"
-            }
+            },
+        topDown=True   # top-down centered camera?
     )
     env.reset()   
     for i in range(100):
@@ -55,7 +56,8 @@ The vanilla Reacher-v1 environment has the following parameters:
         "arenaBorders": "0.9 0.4 0.6",
         "arm0": "0.0 0.4 0.6",
         "arm1": "0.0 0.4 0.6"
-    }
+    },
+    topDown = False
     
 
 If you don't assign some of these parameters they will default to these values.
