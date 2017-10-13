@@ -1,5 +1,6 @@
 import gym
 import numpy as np
+import time
 from gym import utils, error, spaces
 
 from gym_reacher2.envs import MujocoReacher2Env
@@ -90,12 +91,20 @@ class Reacher2Env(MujocoReacher2Env, utils.EzPickle):
         return self._get_obs()
 
     def _get_obs(self):
+        # qpos (shape [4,1]) holds the angles of the 2 joints
+        # it has the form: [
+        # x angle joint 1 in rad,
+        # x angle joint 2 in rad,
+        # y angle joint 1 (constant)
+        # y angle joint 2 (constant)
+        # ]
         theta = self.model.data.qpos.flat[:2]
         return np.concatenate([
             np.cos(theta),
-            np.sin(theta),
+            np.sin(theta), # this is the most meaningful data here,
+            # containing the sine of the two joint angles
             self.model.data.qpos.flat[2:],
-            self.model.data.qvel.flat[:2],
+            self.model.data.qvel.flat[:2], # angular momentum of the two joints
             self.get_body_com("fingertip") - self.get_body_com("target")
         ])
 
@@ -114,3 +123,4 @@ if __name__ == '__main__':
     for i in range(100):
         env.render()
         env.step(env.action_space.sample())
+        # time.sleep(.5)
