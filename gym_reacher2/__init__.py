@@ -12,3 +12,9 @@ register(
     entry_point='gym_reacher2.envs:Reacher2PixelEnv',
     kwargs={'base_env_id': 'Reacher2-v1'}
 )
+
+register(
+    id='Reacher2Plus-v1',
+    entry_point='gym_reacher2.envs:Reacher2PlusEnv',
+    kwargs={'base_env_id': 'Reacher2-v1'}
+)
