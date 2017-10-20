@@ -80,7 +80,7 @@ class Reacher2Env(MujocoReacher2Env, utils.EzPickle):
 
     def top_down_cam(self):
         self.viewer.cam.trackbodyid = 0  # id of the body to track
-        self.viewer.cam.distance = self.model.stat.extent * 0.37  # how much you "zoom in", model.stat.extent is the max limits of the arena
+        self.viewer.cam.distance = self.model.stat.extent * 0.6  # how much you "zoom in", model.stat.extent is the max limits of the arena
         self.viewer.cam.lookat[0] = 0  # x,y,z offset from the object
         self.viewer.cam.lookat[1] = 0
         self.viewer.cam.lookat[2] = 0
