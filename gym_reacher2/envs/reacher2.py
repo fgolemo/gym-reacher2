@@ -53,7 +53,7 @@ class Reacher2Env(MujocoReacher2Env, utils.EzPickle):
             'render.modes': ['human', 'rgb_array'],
             'video.frames_per_second': 50
         }
-        self.obs_dim = 11
+        self.obs_dim = 13 # two more at the end for the absolute joint positions
 
         self.action_space = spaces.Box(
             np.array([-1., -1.]),
