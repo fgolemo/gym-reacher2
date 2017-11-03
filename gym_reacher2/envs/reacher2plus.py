@@ -3,28 +3,31 @@ import numpy as np
 import torch
 from gym import spaces
 
-
 relevant_items = [2, 3, 6, 7]
+
 
 def obs_to_net(obs):
     obs_v = torch.autograd.Variable(torch.from_numpy(obs[relevant_items].astype(np.float32), ), requires_grad=False)
     return obs_v
 
+
 def net_to_obs(net, obs):
     for i, idx in enumerate(relevant_items):
-        obs[idx] = net[0,i].data.numpy()[0]
+        obs[idx] = net[0, i].data.numpy()[0]
     return obs
+
 
 class Reacher2InferenceWrapper(gym.ObservationWrapper):
     def __init__(self, env):
         super(Reacher2InferenceWrapper, self).__init__(env)
         env.load_model = self.load_model
+        self.env = env
 
     def load_model(self, net, modelPath):
         self.net = net
         checkpoint = torch.load(modelPath, map_location=lambda storage, loc: storage)
         self.net.load_state_dict(checkpoint['state_dict'])
-        print("DBG: MODEL LOADED:",modelPath)
+        print("DBG: MODEL LOADED:", modelPath)
 
     def _observation(self, observation):
         super_obs = self.env.env._get_obs()
@@ -32,11 +35,22 @@ class Reacher2InferenceWrapper(gym.ObservationWrapper):
         obs_v = obs_to_net(super_obs)
         # print(obs_v)
         obs_plus = self.net.forward(obs_v)
-        # print(obs_plus)
+
+        self._set_to_simplus(obs_plus.cpu().data.numpy()[0])
+
         obs_plus_full = net_to_obs(obs_plus, super_obs)
         # print(obs_plus_full)
 
         return obs_plus_full
+
+    def _set_to_simplus(self, obs_plus):
+        qpos = self.env.env.model.data.qpos.ravel().copy()
+        qvel = self.env.env.model.data.qvel.ravel().copy()
+        # print (qpos[:2], np.sin(qpos[:2]), obs_plus[:2], np.arcsin(obs_plus[:2]))
+        qpos[:2] = np.arcsin(obs_plus[:2])
+        qvel[:2] = obs_plus[2:]
+
+        self.env.env.set_state(qpos, qvel)
 
     def _reset(self):
         self.net.zero_hidden()  # !important
@@ -45,13 +59,14 @@ class Reacher2InferenceWrapper(gym.ObservationWrapper):
         # print("DBG: HIDDEN STATE RESET AND DETACHED")
         return super(Reacher2InferenceWrapper, self)._reset()
 
+
 def Reacher2PlusEnv(base_env_id):
     return Reacher2InferenceWrapper(gym.make(base_env_id))
 
 
 # if __name__ == '__main__':
 #     import gym_reacher2
-#     env = gym.make("Reacher2Pixel-v1")
+#     env = gym.make("Reacher2Plus-v1")
 #     env.env.env._init(
 #         arm0=.05,  # length of limb 1
 #         arm1=.2,  # length of limb 2

@@ -5,6 +5,7 @@ from gym import spaces
 
 class MujocoPixelWrapper(gym.ObservationWrapper):
     def __init__(self, env):
+        self.env = env
         super(MujocoPixelWrapper, self).__init__(env)
         self.observation_space = [self.observation_space, spaces.Box(0, 255, [500, 500, 3])]
 
