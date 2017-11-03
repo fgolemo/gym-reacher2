@@ -117,7 +117,8 @@ class Reacher2Env(MujocoReacher2Env, utils.EzPickle):
             # containing the sine of the two joint angles
             self.model.data.qpos.flat[2:],
             self.model.data.qvel.flat[:2], # angular momentum of the two joints
-            self.get_body_com("fingertip") - self.get_body_com("target")
+            self.get_body_com("fingertip") - self.get_body_com("target"),
+            theta
         ])
 
 
