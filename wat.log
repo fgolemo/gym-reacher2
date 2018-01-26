@@ -1,0 +1,50 @@
+Collecting mujoco-py
+  Downloading mujoco-py-1.50.1.34.tar.gz (115kB)
+Installing collected packages: mujoco-py
+  Found existing installation: mujoco-py 0.5.7
+    Uninstalling mujoco-py-0.5.7:
+      Successfully uninstalled mujoco-py-0.5.7
+  Running setup.py install for mujoco-py: started
+    Running setup.py install for mujoco-py: still running...
+    Running setup.py install for mujoco-py: still running...
+    Running setup.py install for mujoco-py: finished with status 'error'
+    Complete output from command /usr/bin/python3 -u -c "import setuptools, tokenize;__file__='/tmp/pip-build-qy_4mdwj/mujoco-py/setup.py';f=getattr(tokenize, 'open', open)(__file__);code=f.read().replace('\r\n', '\n');f.close();exec(compile(code, __file__, 'exec'))" install --record /tmp/pip-4ya3vk9j-record/install-record.txt --single-version-externally-managed --compile:
+    running install
+    running build
+    Compiling /tmp/pip-build-qy_4mdwj/mujoco-py/mujoco_py/cymj.pyx because it changed.
+    [1/1] Cythonizing /tmp/pip-build-qy_4mdwj/mujoco-py/mujoco_py/cymj.pyx
+    running build_ext
+    building 'mujoco_py.cymj' extension
+    creating /tmp/pip-build-qy_4mdwj/mujoco-py/mujoco_py/generated/_pyxbld_LinuxExtensionBuilder
+    creating /tmp/pip-build-qy_4mdwj/mujoco-py/mujoco_py/generated/_pyxbld_LinuxExtensionBuilder/temp.linux-x86_64-3.6
+    creating /tmp/pip-build-qy_4mdwj/mujoco-py/mujoco_py/generated/_pyxbld_LinuxExtensionBuilder/temp.linux-x86_64-3.6/tmp
+    creating /tmp/pip-build-qy_4mdwj/mujoco-py/mujoco_py/generated/_pyxbld_LinuxExtensionBuilder/temp.linux-x86_64-3.6/tmp/pip-build-qy_4mdwj
+    creating /tmp/pip-build-qy_4mdwj/mujoco-py/mujoco_py/generated/_pyxbld_LinuxExtensionBuilder/temp.linux-x86_64-3.6/tmp/pip-build-qy_4mdwj/mujoco-py
+    creating /tmp/pip-build-qy_4mdwj/mujoco-py/mujoco_py/generated/_pyxbld_LinuxExtensionBuilder/temp.linux-x86_64-3.6/tmp/pip-build-qy_4mdwj/mujoco-py/mujoco_py
+    creating /tmp/pip-build-qy_4mdwj/mujoco-py/mujoco_py/generated/_pyxbld_LinuxExtensionBuilder/temp.linux-x86_64-3.6/tmp/pip-build-qy_4mdwj/mujoco-py/mujoco_py/gl
+    x86_64-linux-gnu-gcc -pthread -DNDEBUG -g -fwrapv -O2 -Wall -g -fdebug-prefix-map=/build/python3.6-sXpGnM/python3.6-3.6.3=. -specs=/usr/share/dpkg/no-pie-compile.specs -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -fPIC -Imujoco_py -I/tmp/pip-build-qy_4mdwj/mujoco-py/mujoco_py -I/home/florian/.mujoco/mjpro150/include -I/usr/local/lib/python3.6/dist-packages/numpy/core/include -I/tmp/pip-build-qy_4mdwj/mujoco-py/mujoco_py/vendor/egl -I/usr/include/python3.6m -c /tmp/pip-build-qy_4mdwj/mujoco-py/mujoco_py/cymj.c -o /tmp/pip-build-qy_4mdwj/mujoco-py/mujoco_py/generated/_pyxbld_LinuxExtensionBuilder/temp.linux-x86_64-3.6/tmp/pip-build-qy_4mdwj/mujoco-py/mujoco_py/cymj.o -fopenmp -w
+    x86_64-linux-gnu-gcc -pthread -DNDEBUG -g -fwrapv -O2 -Wall -g -fdebug-prefix-map=/build/python3.6-sXpGnM/python3.6-3.6.3=. -specs=/usr/share/dpkg/no-pie-compile.specs -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -fPIC -Imujoco_py -I/tmp/pip-build-qy_4mdwj/mujoco-py/mujoco_py -I/home/florian/.mujoco/mjpro150/include -I/usr/local/lib/python3.6/dist-packages/numpy/core/include -I/tmp/pip-build-qy_4mdwj/mujoco-py/mujoco_py/vendor/egl -I/usr/include/python3.6m -c /tmp/pip-build-qy_4mdwj/mujoco-py/mujoco_py/gl/eglshim.c -o /tmp/pip-build-qy_4mdwj/mujoco-py/mujoco_py/generated/_pyxbld_LinuxExtensionBuilder/temp.linux-x86_64-3.6/tmp/pip-build-qy_4mdwj/mujoco-py/mujoco_py/gl/eglshim.o -fopenmp -w
+    creating /tmp/pip-build-qy_4mdwj/mujoco-py/mujoco_py/generated/_pyxbld_LinuxExtensionBuilder/lib.linux-x86_64-3.6
+    creating /tmp/pip-build-qy_4mdwj/mujoco-py/mujoco_py/generated/_pyxbld_LinuxExtensionBuilder/lib.linux-x86_64-3.6/mujoco_py
+    x86_64-linux-gnu-gcc -pthread -shared -Wl,-O1 -Wl,-Bsymbolic-functions -Wl,-Bsymbolic-functions -specs=/usr/share/dpkg/no-pie-link.specs -Wl,-z,relro -Wl,-Bsymbolic-functions -specs=/usr/share/dpkg/no-pie-link.specs -Wl,-z,relro -g -fdebug-prefix-map=/build/python3.6-sXpGnM/python3.6-3.6.3=. -specs=/usr/share/dpkg/no-pie-compile.specs -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 /tmp/pip-build-qy_4mdwj/mujoco-py/mujoco_py/generated/_pyxbld_LinuxExtensionBuilder/temp.linux-x86_64-3.6/tmp/pip-build-qy_4mdwj/mujoco-py/mujoco_py/cymj.o /tmp/pip-build-qy_4mdwj/mujoco-py/mujoco_py/generated/_pyxbld_LinuxExtensionBuilder/temp.linux-x86_64-3.6/tmp/pip-build-qy_4mdwj/mujoco-py/mujoco_py/gl/eglshim.o -L/home/florian/.mujoco/mjpro150/bin -Wl,--enable-new-dtags,-R/home/florian/.mujoco/mjpro150/bin -lmujoco150 -lglewegl -o /tmp/pip-build-qy_4mdwj/mujoco-py/mujoco_py/generated/_pyxbld_LinuxExtensionBuilder/lib.linux-x86_64-3.6/mujoco_py/cymj.cpython-36m-x86_64-linux-gnu.so -fopenmp
+    
+    WARNING: Existing glfw python module detected!
+    
+    MuJoCo comes with its own version of GLFW, so it's preferable to use that one.
+    
+    The easy solution is to `import mujoco_py` _before_ `import glfw`.
+    
+    sh: 1: TT        [    [V: not found
+    sh: 2: [    : not found
+    sh: 1: TT        [    [V: not found
+    sh: 2: [    : not found
+    sh: 1: TT        [    [V: not found
+    sh: 2: Syntax error: "(" unexpected
+    sh: 1: TT        [    [V: not found
+    sh: 2: Syntax error: "(" unexpected
+    ERROR: Invalid activation key
+    
+    Press Enter to exit ...
+    
+    ----------------------------------------
+  Rolling back uninstall of mujoco-py

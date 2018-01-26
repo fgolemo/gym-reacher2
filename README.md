@@ -19,12 +19,12 @@ in Python 3 (!):
 
     import gym
     import gym_reacher2   
-    env = gym.make("Reacher2-v1")
+    env = gym.make("Reacher2-v0")
     env.env._init(
         arm0 = .05,    # length of limb 1
         arm1 = .2,     # length of limb 2
         torque0 = 100, # torque of joint 1
-        torque1 = 400  # torque of joint 2
+        torque1 = 400,  # torque of joint 2
         fov=70,        # field of view
         colors={
                 "arenaBackground": ".9 .0 .5",
@@ -52,7 +52,7 @@ The vanilla Reacher-v1 environment has the following parameters:
     torque1 = 200,
     fov = 45,
     colors = {
-        "arenaBackground": "0.9 0.9 0.9"
+        "arenaBackground": "0.9 0.9 0.9",
         "arenaBorders": "0.9 0.4 0.6",
         "arm0": "0.0 0.4 0.6",
         "arm1": "0.0 0.4 0.6"

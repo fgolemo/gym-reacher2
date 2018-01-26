@@ -21,7 +21,7 @@ except ImportError as e:
 class Reacher2Env(MujocoReacher2Env, utils.EzPickle):
     isInitialized = False
 
-    def _init(self, arm0=.1, arm1=.1, torque0=200, torque1=200, fov=45, colors=None, topDown=False):
+    def _init(self, arm0=.1, arm1=.1, torque0=200, torque1=200, fov=45, colors=None, topDown=False, xml='reacher.xml'):
         if colors is None:
             # color values are "R G B", for red, green, and blue respectively
             # in the range from 0 to 1. For example white it "1 1 1". Red is
@@ -46,7 +46,7 @@ class Reacher2Env(MujocoReacher2Env, utils.EzPickle):
 
         self.isInitialized = True
         utils.EzPickle.__init__(self)
-        MujocoReacher2Env.__init__(self, 'reacher.xml', 2, params)
+        MujocoReacher2Env.__init__(self, xml, 2, params)
 
     def __init__(self):
         self.metadata = {
