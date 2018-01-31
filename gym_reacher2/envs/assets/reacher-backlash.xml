@@ -40,7 +40,7 @@
 		<global fovy="45"/>
 	</visual>
 	<equality>
-		<joint name="backlash1" joint1="joint0" polycoef="3 0 0 0 0" solimp="0.01 0.5 10"/>
+		<joint name="backlash1" joint1="joint0" polycoef="3 0 0 0 0" solimp="0.01 1.2 11"/>
 		 <!--solref="0.02 0.2" -->
 	</equality>
 </mujoco>
