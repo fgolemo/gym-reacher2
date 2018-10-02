@@ -11,7 +11,6 @@ NOT_INITIALIZED_ERR = "Before doing a reset or your first " \
 
 try:
     import mujoco_py
-    from mujoco_py.mjlib import mjlib
 except ImportError as e:
     raise error.DependencyNotInstalled(
         "{}. (HINT: you need to install mujoco_py, and also perform the setup instructions here: https://github.com/openai/mujoco-py/.)".format(
@@ -64,9 +63,9 @@ class Reacher2Env(MujocoReacher2Env, utils.EzPickle):
         low = -high
         self.observation_space = spaces.Box(low, high)
 
-        self._seed()
+        self.seed()
 
-    def _step(self, a):
+    def step(self, a):
         if not self.isInitialized:
             raise Exception(NOT_INITIALIZED_ERR)
         vec = self.get_body_com("fingertip") - self.get_body_com("target")
@@ -110,13 +109,13 @@ class Reacher2Env(MujocoReacher2Env, utils.EzPickle):
         # y angle joint 1 (constant)
         # y angle joint 2 (constant)
         # ]
-        theta = self.model.data.qpos.flat[:2]
+        theta = self.sim.data.qpos.flat[:2]
         return np.concatenate([
             np.cos(theta),
             np.sin(theta), # this is the most meaningful data here,
             # containing the sine of the two joint angles
-            self.model.data.qpos.flat[2:],
-            self.model.data.qvel.flat[:2], # angular momentum of the two joints
+            self.sim.data.qpos.flat[2:],
+            self.sim.data.qvel.flat[:2], # angular momentum of the two joints
             self.get_body_com("fingertip") - self.get_body_com("target"),
             theta
         ])
@@ -124,7 +123,7 @@ class Reacher2Env(MujocoReacher2Env, utils.EzPickle):
 
 if __name__ == '__main__':
     import gym_reacher2
-    env = gym.make("Reacher2-v1")
+    env = gym.make("Reacher2-v0")
     env.env._init(
         arm0=.05,  # length of limb 1
         arm1=.2,  # length of limb 2
@@ -136,4 +135,4 @@ if __name__ == '__main__':
     for i in range(100):
         env.render()
         env.step(env.action_space.sample())
-        # time.sleep(.5)
+        time.sleep(.1)

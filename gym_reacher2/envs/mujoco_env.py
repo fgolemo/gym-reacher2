@@ -9,11 +9,12 @@ from gym.envs.mujoco import MujocoEnv
 
 try:
     import mujoco_py
-    from mujoco_py.mjlib import mjlib
 except ImportError as e:
     raise error.DependencyNotInstalled(
         "{}. (HINT: you need to install mujoco_py, and also perform the setup instructions here: https://github.com/openai/mujoco-py/.)".format(
             e))
+
+DEFAULT_SIZE = 500
 
 
 class MujocoReacher2Env(MujocoEnv):
@@ -34,14 +35,16 @@ class MujocoReacher2Env(MujocoEnv):
 
         modified_xml_path = self._modifyXml(fullpath, model_parameters)
         # print('new xml path: {}'.format(modified_xml_path))
-        self.model = mujoco_py.MjModel(modified_xml_path)
 
         self.frame_skip = frame_skip
-        self.data = self.model.data
+        self.model = mujoco_py.load_model_from_path(modified_xml_path)
+        self.sim = mujoco_py.MjSim(self.model)
+        self.data = self.sim.data
+
         self.viewer = None
 
-        self.init_qpos = self.model.data.qpos.ravel().copy()
-        self.init_qvel = self.model.data.qvel.ravel().copy()
+        self.init_qpos = self.sim.data.qpos.ravel().copy()
+        self.init_qvel = self.sim.data.qvel.ravel().copy()
 
     def _modifyXml(self, xml_file, model_parameters):
 
@@ -89,16 +92,13 @@ class MujocoReacher2Env(MujocoEnv):
 
         return new_file_path
 
-    def _render(self, mode='human', close=False):
-        if close:
-            if self.viewer is not None:
-                self._get_viewer().finish()
-                self.viewer = None
-            return
-
+    def render(self, mode='human'):
         if mode == 'rgb_array':
             self._get_viewer().render()
-            data, width, height = self._get_viewer().get_image()
-            return np.fromstring(data, dtype='uint8').reshape(height, width, 3)[::-1, :, :]
+            # window size used for old mujoco-py:
+            width, height = 500, 500
+            data = self._get_viewer().read_pixels(width, height, depth=False)
+            # original image is upside-down, so flip it
+            return data[::-1, :, :]
         elif mode == 'human':
-            self._get_viewer().loop_once()
+            self._get_viewer().render()
