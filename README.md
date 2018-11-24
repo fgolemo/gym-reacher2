@@ -20,17 +20,14 @@ in Python 3 (!):
     import gym
     import gym_reacher2   
     env = gym.make("Reacher2-v0")
-    env.env._init(
-        arm0 = .05,    # length of limb 1
-        arm1 = .2,     # length of limb 2
-        torque0 = 100, # torque of joint 1
-        torque1 = 400,  # torque of joint 2
+    env.unwrapped._init(
+        arms = (.05,.2),     # length of limbs
+        torques = (400,100), # torque of joints
         fov=70,        # field of view
         colors={
                 "arenaBackground": ".9 .0 .5",
                 "arenaBorders": "0.1 0.1 0.4",
-                "arm0": "0.8 0.7 0.1",
-                "arm1": "0.2 0.5 0.1"
+                "arms": "0.8 0.7 0.1",
             },
         topDown=True   # top-down centered camera?
     )
@@ -46,18 +43,32 @@ in Python 3 (!):
 
 The vanilla Reacher-v1 environment has the following parameters:
 
-    arm0 = .1,
-    arm1 = .1,
-    torque0 = 200,
-    torque1 = 200,
+    arms = (.1,.1),
+    torques = (200,200),
     fov = 45,
     colors = {
         "arenaBackground": "0.9 0.9 0.9",
         "arenaBorders": "0.9 0.4 0.6",
-        "arm0": "0.0 0.4 0.6",
-        "arm1": "0.0 0.4 0.6"
+        "arms": "0.0 0.4 0.6",
     },
     topDown = False
     
 
 If you don't assign some of these parameters they will default to these values.
+
+#### All the DoF:
+
+If you want more than 2 DoF, like ... 3, you can use this code:
+
+    env = gym.make("Reacher2-3Dof-v0")
+    env.unwrapped._init(
+        armlens=(.07,.07,.06),  # length of limbs, should add up to .2
+        torques=(200,200,200),  # torque of joints, 200 is default
+    )
+    env.reset()
+
+    for i in range(100):
+        env.render()
+        env.step(env.action_space.sample())
+        time.sleep(.05)
+

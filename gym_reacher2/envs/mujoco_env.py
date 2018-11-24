@@ -19,10 +19,8 @@ DEFAULT_SIZE = 500
 
 class MujocoReacher2Env(MujocoEnv):
     def __init__(self, model_path, frame_skip, model_parameters):
-        assert "arm0" in model_parameters
-        assert "arm1" in model_parameters
-        assert "torque0" in model_parameters
-        assert "torque1" in model_parameters
+        assert "armlens" in model_parameters
+        assert "torques" in model_parameters
         assert "fov" in model_parameters
         assert "colors" in model_parameters
 
@@ -51,23 +49,23 @@ class MujocoReacher2Env(MujocoEnv):
         tree = ET.ElementTree(file=xml_file)
         root = tree.getroot()
 
-        for i in range(2):
-            bodies = "/".join(["body"] * (i + 1))
+        for i in range(len(model_parameters["armlens"])):
+            # bodies = "/".join(["body"] * (i + 1))
+            bodies = list(root.iter("body"))
 
-            arm_value = model_parameters["arm{}".format(i)]
+            arm_value = model_parameters["armlens"][i]
 
-            arm = root.find('worldbody/{}/geom'.format(bodies))
+            arm = bodies[i].find('geom')
             arm.set('fromto', '0 0 0 {} 0 0'.format(arm_value))
 
             if "arm" + str(i) in model_parameters["colors"]:
-                arm.set('rgba', '{} 1'.format(model_parameters["colors"]["arm" + str(i)]))
+                arm.set('rgba', '{} 1'.format(model_parameters["colors"]["arms"]))
 
-            body = root.find('worldbody/{}/body'.format(bodies))
+            body = bodies[i+1]
             body.set('pos', '{} 0 0'.format(arm_value))
 
-        for i in range(2):
-            joint = root.find('actuator/motor[@joint="joint{}"]'.format(i))
-            joint.set('gear', str(float(model_parameters["torque{}".format(i)])))
+            joints = list(root.iter('motor'))
+            joints[i].set('gear', str(float(model_parameters["torques"][i])))
 
         if "arenaBackground" in model_parameters["colors"]:
             arena = root.find('worldbody/geom[@type="plane"]')

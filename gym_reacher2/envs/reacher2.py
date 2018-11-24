@@ -20,7 +20,7 @@ except ImportError as e:
 class Reacher2Env(MujocoReacher2Env, utils.EzPickle):
     isInitialized = False
 
-    def _init(self, arm0=.1, arm1=.1, torque0=200, torque1=200, fov=45, colors=None, topDown=False, xml='reacher.xml'):
+    def _init(self, armlens=(.1,.1), torques=(200,200), fov=45, colors=None, topDown=False, xml='reacher.xml'):
         if colors is None:
             # color values are "R G B", for red, green, and blue respectively
             # in the range from 0 to 1. For example white it "1 1 1". Red is
@@ -29,14 +29,15 @@ class Reacher2Env(MujocoReacher2Env, utils.EzPickle):
             colors = {
                 "arenaBackground": ".9 .9 .9",
                 "arenaBorders": "0.9 0.4 0.6",
-                "arm0": "0.0 0.4 0.6",
-                "arm1": "0.0 0.4 0.6"
+                "arms": "0.0 0.4 0.6",
             }
+        assert len(armlens) == len(torques) == self.dof
+        if self.dof != 2 and xml == "reacher.xml":
+            xml = "reacher-{}dof.xml".format(self.dof)
+
         params = {
-            "arm0": arm0,
-            "arm1": arm1,
-            "torque0": torque0,
-            "torque1": torque1,
+            "armlens": armlens,
+            "torques": torques,
             "fov": fov,
             "colors": colors
         }
@@ -47,25 +48,28 @@ class Reacher2Env(MujocoReacher2Env, utils.EzPickle):
         utils.EzPickle.__init__(self)
         MujocoReacher2Env.__init__(self, xml, 2, params)
 
-    def __init__(self):
+    def __init__(self, dof=2):
         self.metadata = {
             'render.modes': ['human', 'rgb_array'],
             'video.frames_per_second': 50
         }
         self.obs_dim = 13 # two more at the end for the absolute joint positions
 
+        self.dof = dof
+
         self.action_space = spaces.Box(
-            np.array([-1., -1.]),
-            np.array([1., 1.])
-        )
+            np.array([-1.]*self.dof),
+            np.array([1.]*self.dof),
+        dtype=np.float32)
 
         high = np.inf * np.ones(self.obs_dim)
         low = -high
-        self.observation_space = spaces.Box(low, high)
+        self.observation_space = spaces.Box(low, high, dtype=np.float32)
 
         self.seed()
 
     def step(self, a):
+        assert len(a) == self.dof
         if not self.isInitialized:
             raise Exception(NOT_INITIALIZED_ERR)
         vec = self.get_body_com("fingertip") - self.get_body_com("target")
@@ -109,13 +113,13 @@ class Reacher2Env(MujocoReacher2Env, utils.EzPickle):
         # y angle joint 1 (constant)
         # y angle joint 2 (constant)
         # ]
-        theta = self.sim.data.qpos.flat[:2]
+        theta = self.sim.data.qpos.flat[:self.dof]
         return np.concatenate([
             np.cos(theta),
             np.sin(theta), # this is the most meaningful data here,
             # containing the sine of the two joint angles
             self.sim.data.qpos.flat[2:],
-            self.sim.data.qvel.flat[:2], # angular momentum of the two joints
+            self.sim.data.qvel.flat[:self.dof], # angular momentum of the two joints
             self.get_body_com("fingertip") - self.get_body_com("target"),
             theta
         ])
@@ -123,16 +127,19 @@ class Reacher2Env(MujocoReacher2Env, utils.EzPickle):
 
 if __name__ == '__main__':
     import gym_reacher2
-    env = gym.make("Reacher2-v0")
-    env.env._init(
-        arm0=.05,  # length of limb 1
-        arm1=.2,  # length of limb 2
-        torque0=400,  # torque of joint 1
-        torque1=100  # torque of joint 2
+    # env = gym.make("Reacher2-v0")
+    # env.env._init(
+    #     armlens=(.05,.2),  # length of limbs
+    #     torques=(100,100),  # torque of joints
+    # )
+    env = gym.make("Reacher2-3Dof-v0")
+    env.unwrapped._init(
+        armlens=(.06,.06,.07),  # length of limbs
+        torques=(200,200,200),  # torque of joints
     )
     env.reset()
 
     for i in range(100):
         env.render()
         env.step(env.action_space.sample())
-        time.sleep(.1)
+        time.sleep(.05)
